@@ -7,6 +7,7 @@ Mode
 - Display words with and without item count
 - Parse `stdin` to n-grams by spaces and add to count
 - Parse `stdin` by a custom dictionary and add to count
+- Remove items from `stdout` by length
 - All flags can be used together for more granular parsing
 
 ## Getting Started
@@ -15,6 +16,7 @@ Mode
 - [Count Frequency](#Count-Frequency)
 - [Parse Text](#Parse-Text)
 - [Custom Dictionary](#Custom-Dictionary)
+- [Exclude by Length](#Exclude-by-Length)
 - [Speed Test](#Speed-Test)
 
 ### Install
@@ -23,13 +25,16 @@ go install -v github.com/jakewnuk/mode@latest
 ```
 ```
 Usage of mode (version 1.0.0):
-  -c    Display the frequency count of each item
-        Example: mode -c
+  -c	Display the frequency count of each item
+    	Example: mode -c
   -f string
-        Parse items from a dictionary file and add to count. The file should contain one item per line.
-        Example: mode -f dict.txt
-  -s    Split items into n-grams by spaces and add to count.
-        Example: mode -s
+    	Parse items from a dictionary file and add to count. The file should contain one item per line.
+    	Example: mode -f dict.txt
+  -s	Split items into n-grams by spaces and add to count.
+    	Example: mode -s
+  -x int
+    	Exclude items below a length from output. Length should be an integer.
+    	Example: mode -x 5
 ```
 ```
 $ cat test.txt
@@ -117,6 +122,16 @@ $ cat test.txt | mode -f dict.txt
 1 hello World!
 1 World
 1 TestWorld
+```
+
+## Exclude by Length
+- Exclude items from `stdout` by length
+```
+$ cat test.txt | mode -x 7
+Test1234
+hello World!
+TestWorld
+Testing This Hello
 ```
 
 ## Speed Test

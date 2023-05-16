@@ -74,12 +74,15 @@ func SortItems(freq map[string]int) []string {
 
 // PrintItems prints an array to stdout
 // If verbose is provided the count is printed
-func PrintItems(items []string, freq map[string]int, verbose bool) {
+// If exclude items are removed from the output
+func PrintItems(items []string, freq map[string]int, verbose bool, exclude int) {
 	for _, item := range items {
-		if verbose {
-			fmt.Printf("%d %s\n", freq[item], item)
-		} else {
-			fmt.Println(item)
+		if len(item) > exclude {
+			if verbose {
+				fmt.Printf("%d %s\n", freq[item], item)
+			} else {
+				fmt.Println(item)
+			}
 		}
 	}
 }
