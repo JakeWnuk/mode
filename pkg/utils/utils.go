@@ -10,9 +10,11 @@ import (
 )
 
 // AddNgramCount splits input by spaces into ngrams then adds their frequency
-func AddNgramCount(item string, freq map[string]int) map[string]int {
+func AddNgramCount(item string, exclude int, freq map[string]int) map[string]int {
 	for _, ngram := range strings.Fields(item) {
-		freq[ngram]++
+		if len(ngram) > exclude {
+			freq[ngram]++
+		}
 	}
 	return freq
 }
@@ -30,28 +32,36 @@ func AddSegmentCount(item string, freq map[string]int, dict []string) map[string
 // If split is provided input is split into ngrams by strings.Fields()
 // If parse is provided input is parsed into segments by a dict
 // Items are added to the base frequency which is stdin input
-func CountFrequencies(stdIn *bufio.Scanner, split bool, file string, freq map[string]int) map[string]int {
+func CountFrequencies(stdIn *bufio.Scanner, split bool, file string, exclude int, include bool, freq map[string]int) map[string]int {
 	var dict []string
 	parse := false
 
 	if file != "" {
 		parse = true
-		dict = LoadDict(file)
+		dict = LoadDict(file, exclude)
 	}
 
 	for stdIn.Scan() {
 		item := stdIn.Text()
 
 		if split && parse {
-			freq = AddNgramCount(item, freq)
+			freq = AddNgramCount(item, exclude, freq)
 			freq = AddSegmentCount(item, freq, dict)
 		} else if split {
-			freq = AddNgramCount(item, freq)
+			freq = AddNgramCount(item, exclude, freq)
 		} else if parse {
 			freq = AddSegmentCount(item, freq, dict)
 		}
 
 		freq[item]++
+	}
+
+	if include && parse {
+		for key := range freq {
+			if !contains(dict, key) {
+				delete(freq, key)
+			}
+		}
 	}
 
 	return freq
@@ -125,7 +135,7 @@ func ReadStdin() (*bufio.Scanner, error) {
 }
 
 // LoadDict loads a dictionary of words from a file
-func LoadDict(filename string) []string {
+func LoadDict(filename string, exclude int) []string {
 	file, err := os.Open(filename)
 	CheckError(err)
 	defer file.Close()
@@ -133,7 +143,9 @@ func LoadDict(filename string) []string {
 	var dict []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		dict = append(dict, scanner.Text())
+		if len(scanner.Text()) > exclude {
+			dict = append(dict, scanner.Text())
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -147,6 +159,16 @@ func LoadDict(filename string) []string {
 	})
 
 	return dict
+}
+
+// contains checks if a string array contains a given item
+func contains(slice []string, item string) bool {
+	for _, element := range slice {
+		if element == item {
+			return true
+		}
+	}
+	return false
 }
 
 // CheckError is a general error handler

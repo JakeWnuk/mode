@@ -8,6 +8,7 @@ Mode
 - Parse `stdin` to n-grams by spaces and add to count
 - Parse `stdin` by a custom dictionary and add to count
 - Remove items from `stdout` by length
+- Remove items from `stdout` that are not in a custom dictionary
 - All flags can be used together for more granular parsing
 
 ## Getting Started
@@ -17,6 +18,7 @@ Mode
 - [Parse Text](#Parse-Text)
 - [Custom Dictionary](#Custom-Dictionary)
 - [Exclude by Length](#Exclude-by-Length)
+- [Exclude by Dictionary](#Exclude-by-Dictionary)
 - [Speed Test](#Speed-Test)
 
 ### Install
@@ -25,16 +27,18 @@ go install -v github.com/jakewnuk/mode@latest
 ```
 ```
 Usage of mode (version 1.0.0):
-  -c	Display the frequency count of each item
-    	Example: mode -c
+  -c    Display the frequency count of each item
+        Example: mode -c
   -f string
-    	Parse items from a dictionary file and add to count. The file should contain one item per line.
-    	Example: mode -f dict.txt
-  -s	Split items into n-grams by spaces and add to count.
-    	Example: mode -s
+        Parse items from a dictionary file and add to count. The file should contain one item per line.
+        Example: mode -f dict.txt
+  -s    Split items into n-grams by spaces and add to count.
+        Example: mode -s
+  -w    Only include items that are in a dictionary file to output. The file should contain one item per line.
+        Example: mode -w -f dict.txt
   -x int
-    	Exclude items below a length from output. Length should be an integer.
-    	Example: mode -x 5
+        Exclude items below a length from output. Length should be an integer.
+        Example: mode -x 5
 ```
 ```
 $ cat test.txt
@@ -126,12 +130,23 @@ $ cat test.txt | mode -f dict.txt
 
 ## Exclude by Length
 - Exclude items from `stdout` by length
+- Items less than or equal to `-x` are removed
 ```
 $ cat test.txt | mode -x 7
 Test1234
 hello World!
 TestWorld
 Testing This Hello
+```
+
+## Exclude by File
+- Remove items from `stdout` that are not in a custom dictionary
+```
+$ cat dict.txt
+TestWorld
+
+$ cat test.txt | mode -w -f dict.txt
+TestWorld
 ```
 
 ## Speed Test
