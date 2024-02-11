@@ -85,28 +85,37 @@ func ProcessURL(url string, ch chan<- string, wg *sync.WaitGroup) {
 	text = html.UnescapeString(text)
 	var lines []string
 
-	// Parse the HTML
-	doc, err := html.Parse(strings.NewReader(text))
-	if err != nil {
-		panic(err)
-	}
+	// Check the Content-Type of the response
+	contentType := resp.Header.Get("Content-Type")
+	if strings.Contains(contentType, "text/html") {
+		// Parse the HTML
+		doc, err := html.Parse(strings.NewReader(text))
+		if err != nil {
+			panic(err)
+		}
 
-	// Traverse the HTML tree and extract the text
-	var f func(*html.Node)
-	f = func(n *html.Node) {
-		if n.Type == html.TextNode {
-			lines = append(lines, n.Data)
+		// Traverse the HTML tree and extract the text
+		var f func(*html.Node)
+		f = func(n *html.Node) {
+			if n.Type == html.TextNode {
+				lines = append(lines, n.Data)
+			}
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				f(c)
+			}
 		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
+		f(doc)
+	} else {
+		sentences := strings.Split(text, "\n")
+		for _, line := range sentences {
+			lines = append(lines, line)
 		}
 	}
-	f(doc)
 
 	// Iterate over the lines and split them
 	for _, line := range lines {
 		textMatch, _ := regexp.MatchString(`[^a-zA-Z0-9.,;:!?'"\- ]`, line)
-		if textMatch {
+		if !textMatch {
 			continue
 		}
 
