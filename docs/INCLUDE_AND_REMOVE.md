@@ -13,7 +13,7 @@ Include items from a `file` or `URL`
 $ cat keep.txt
 string
 
-$ mode -c -s -w keep.txt example.txt
+$ mode -c -w keep.txt example.txt
 1 string
 ```
 Exclude items from a `file` or `URL`
@@ -21,7 +21,7 @@ Exclude items from a `file` or `URL`
 $ cat remove.txt
 string
 
-$ mode -c -s -v remove.txt example.txt
+$ mode -c -v remove.txt example.txt
 2 this
 1 is
 1 A
