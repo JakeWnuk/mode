@@ -115,8 +115,14 @@ func ProcessURL(url string, ch chan<- string, wg *sync.WaitGroup) {
 	// Iterate over the lines and split them
 	for _, line := range lines {
 		textMatch, _ := regexp.MatchString(`[^a-zA-Z0-9.,;:!?'"\- ]`, line)
-		if !textMatch {
-			continue
+		if strings.Contains(contentType, "text/html") {
+			if textMatch {
+				continue
+			}
+		} else {
+			if !textMatch {
+				continue
+			}
 		}
 
 		sentences := strings.Split(line, ".")
