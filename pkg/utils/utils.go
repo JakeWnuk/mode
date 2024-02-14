@@ -79,7 +79,7 @@ func ProcessURL(url string, ch chan<- string, wg *sync.WaitGroup) {
 
 		resp, err = http.Get(url)
 		if err != nil {
-			panic(err)
+			continue
 		}
 		defer resp.Body.Close()
 
