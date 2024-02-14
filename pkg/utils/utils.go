@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 	"unicode"
 
 	"golang.org/x/net/html"
@@ -69,14 +70,28 @@ func ProcessFile(filename string, ch chan<- string, wg *sync.WaitGroup) {
 //
 //	None
 func ProcessURL(url string, ch chan<- string, wg *sync.WaitGroup) {
+	const maxRetries = 4
 	defer wg.Done()
 
-	resp, err := http.Get(url)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	var err error
+	var resp *http.Response
+	for attempts := 0; attempts <= maxRetries; attempts++ {
 
+		resp, err = http.Get(url)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			time.Sleep(time.Second)
+			continue
+		}
+
+		break
+	}
+
+	// Read Body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
