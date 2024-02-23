@@ -17,14 +17,15 @@ Mode supports input from `stdin`, `files`, and `URLs`.
 ```
 go install github.com/JakeWnuk/mode@latest
 ```
-### Current Version 0.0.0:
+### Current Version 0.0.1:
 ```
-Usage of Mode version (0.0.0):
+Usage of Mode version (0.0.1):
 
-mode [options] [URLS/FILES]
+mode [options] [URLS/FILES] [...]
 Accepts standard input and/or additonal arguments.
 
 Options:
+  -a    Perform additional parsing of each item
   -c    Show the frequency count of each item
   -m int
         Minimum frequency to include in output. Value should be an integer.

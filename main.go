@@ -13,7 +13,7 @@ import (
 	"github.com/jakewnuk/mode/pkg/utils"
 )
 
-var version = "0.0.0"
+var version = "0.0.1"
 
 type argumentFilesFlag []string
 
@@ -37,12 +37,13 @@ func main() {
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of Mode version (%s):\n\n", version)
-		fmt.Fprintf(os.Stderr, "mode [options] [URLS/FILES]\nAccepts standard input and/or additonal arguments.\n\n")
+		fmt.Fprintf(os.Stderr, "mode [options] [URLS/FILES] [...]\nAccepts standard input and/or additonal arguments.\n\n")
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
 	}
 
 	count := flag.Bool("c", false, "Show the frequency count of each item")
+	parse := flag.Bool("a", false, "Perform additional parsing of each item")
 	minimum := flag.Int("m", 0, "Minimum frequency to include in output. Value should be an integer.")
 	exclude := flag.Int("x", 0, "Exclude items less than or equal to a length from output. Length should be an integer.")
 	flag.Var(&retain, "w", "Only include items in a file.")
@@ -93,7 +94,12 @@ func main() {
 		for _, line := range lines {
 			str, err := utils.FilterTextForPrint(line, *exclude, retainMap, removeMap)
 			if err == nil {
-				tokens, err := utils.TokenizeParse(str)
+				var tokens []string
+				if *parse {
+					tokens, err = utils.TokenizeParse(str)
+				} else {
+					tokens = append(tokens, str)
+				}
 				if err != nil {
 					continue
 				}
