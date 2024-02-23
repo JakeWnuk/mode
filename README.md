@@ -15,7 +15,7 @@ Mode supports input from `stdin`, `files`, and `URLs`.
 
 ### Install from Source
 ```
-go install github.com/JakeWnuk/mode@latest
+go install github.com/jakewnuk/mode@v0.0.1
 ```
 ### Current Version 0.0.1:
 ```
