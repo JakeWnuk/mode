@@ -13,6 +13,12 @@ Usage information and other documentation can be found below:
 Mode supports input from `stdin`, `files`, and `URLs`.
 - Pass multiple items as items after flags
 
+Mode fits into a small tool ecosystem for password cracking and is designed for lightweight and easy usage with its companion tools:
+
+- [maskcat](https://github.com/JakeWnuk/maskcat)
+- [rulecat](https://github.com/JakeWnuk/rulecat)
+- [mode](https://github.com/JakeWnuk/mode)
+
 ### Install from Source
 ```
 go install github.com/jakewnuk/mode@v0.0.1
